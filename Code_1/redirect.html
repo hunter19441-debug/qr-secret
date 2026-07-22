@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eis-Überraschung!</title>
+    <style>
+        /* CSS STYLES */
+
+        /* Grundlegende Einstellungen für die Seite */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Arial Round', sans-serif; /* Kinderfreundliche Schriftart */
+            background-color: #fdf5e6; /* Creme-Farbe für den Hintergrund */
+            color: #333;
+            overflow-x: hidden; /* Verhindert seitliches Scrollen */
+        }
+
+        /* Das Banner oben mit dem Eis-Bild */
+        .eis-banner {
+            width: 100%;
+            height: 60vh; /* 60% der Bildschirmhöhe */
+            background-image: url('grafik.jpg'); /* HIER WIRD DAS BILD GELADEN */
+            background-size: cover; /* Bild füllt den Bereich aus */
+            background-position: center; /* Bild ist zentriert */
+            border-bottom: 10px solid #ffcc00; /* Gelber Streifen unten */
+            position: relative; /* Für die Positionierung von Herzchen */
+        }
+
+        /* Der Hauptinhalt der Seite */
+        .content {
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* Die Überschrift / Nachricht */
+        .nachricht {
+            font-size: 3rem; /* Sehr groß */
+            font-weight: bold;
+            line-height: 1.2;
+            color: #ff6699; /* Fröhliches Rosa */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Kleiner Schatten für bessere Lesbarkeit */
+            animation: bounce 2s infinite; /* Lass die Nachricht hüpfen! */
+        }
+
+        /* Die kleinere Unterschrift */
+        .unternachricht {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            color: #33cc33; /* Fröhliches Grün */
+        }
+
+        /* Ein fröhlicher Knopf */
+        .knopf-container {
+            margin-top: 40px;
+        }
+        
+        .knopf {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            color: white;
+            background-color: #3399ff; /* Blau wie der Himmel */
+            border-radius: 50px; /* Runde Ecken */
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .knopf:hover {
+            background-color: #0077ee; /* Dunkler beim Drüberfahren */
+        }
+
+        /* Kleine dekorative Elemente (Sterne, Herzen) */
+        .deko-stern {
+            color: #ffd700;
+            font-size: 2rem;
+            margin: 0 10px;
+        }
+
+        /* Animation für den Text */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Anpassung für kleine Bildschirme (Handys) */
+        @media (max-width: 600px) {
+            .eis-banner {
+                height: 40vh; /* Weniger hoch auf dem Handy */
+            }
+            .nachricht {
+                font-size: 2rem;
+            }
+            .unternachricht {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Das Eis-Banner -->
+    <div class="eis-banner">
+        <!-- Man könnte hier noch kleine Sterne oder Herzen einfügen -->
+    </div>
+
+    <!-- Der Text-Inhalt -->
+    <div class="content">
+        <p class="unternachricht">Mama sagt:</p>
+        <h1 class="nachricht">Dass habt ihr toll gemacht, jetzt gibt Mama euch ein Eis aus</h1>
+        
+        <p><span class="deko-stern">★</span>Für Kinder<span class="deko-stern">★</span></p>
+
+        <div class="knopf-container">
+            <button class="knopf" onclick="alert('Ab zur Eisdiele!')">🤩 Juhu! Los geht\'s!</button>
+        </div>
+    </div>
+
+</body>
+</html>
