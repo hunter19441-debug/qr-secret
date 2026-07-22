@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171a1d">
+  <title>Tresor-Code</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+               max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+      font-family: Arial, Helvetica, sans-serif;
+      color: #fff;
+      background: radial-gradient(circle at 50% 15%, #3b4146, #181b1e 48%, #08090a);
+      overscroll-behavior: none;
+    }
+
+    button { font: inherit; }
+
+    .vault {
+      position: relative;
+      width: min(920px, 100%);
+      min-height: calc(100svh - 16px);
+      overflow: hidden;
+      border: clamp(8px, 1.8vw, 18px) solid #17191b;
+      border-radius: clamp(18px, 3vw, 34px);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.08), transparent 22%),
+        linear-gradient(180deg, #575d62, #292d31 48%, #17191b);
+      box-shadow:
+        0 22px 55px rgba(0,0,0,.65),
+        inset 0 0 0 4px #73797e,
+        inset 0 0 0 10px #202326;
+    }
+
+    .vault::before {
+      content: "";
+      position: absolute;
+      inset: clamp(12px, 3vw, 28px);
+      border: clamp(3px, .7vw, 6px) solid #0b0c0d;
+      border-radius: clamp(14px, 2.5vw, 24px);
+      box-shadow: inset 0 0 0 2px #777d82, inset 0 0 24px #000;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      width: min(720px, 90%);
+      margin: clamp(32px, 6vw, 58px) auto 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sign {
+      max-width: 100%;
+      margin-bottom: clamp(18px, 4vw, 34px);
+      padding: clamp(10px, 2vw, 16px) clamp(18px, 5vw, 46px);
+      border: 3px solid #17191a;
+      border-radius: 16px;
+      color: #090a0b;
+      background: linear-gradient(#a7acb0, #53585c 48%, #8d9296);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.25), 0 8px 14px rgba(0,0,0,.5);
+      font-size: clamp(20px, 5vw, 42px);
+      font-weight: 900;
+      letter-spacing: clamp(1px, .5vw, 3px);
+      text-align: center;
+      text-shadow: 0 1px rgba(255,255,255,.45);
+    }
+
+    .code-panel {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(6px, 2vw, 24px);
+      padding: clamp(10px, 2.5vw, 26px);
+      border: 4px solid #090a0b;
+      border-radius: 22px;
+      background: linear-gradient(#171a1d, #08090a);
+      box-shadow: inset 0 0 0 2px #454a4f, inset 0 0 24px #000, 0 12px 24px rgba(0,0,0,.5);
+    }
+
+    .digit-wheel {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: clamp(42px, 7vw, 50px) clamp(78px, 15vw, 118px) clamp(42px, 7vw, 50px);
+      overflow: hidden;
+      border: 3px solid #070809;
+      border-radius: 12px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.15), 0 5px 12px rgba(0,0,0,.65);
+    }
+
+    .red { background: linear-gradient(#ff3b30, #9e0c06); }
+    .blue { background: linear-gradient(#2467da, #062d77); }
+    .green { background: linear-gradient(#5bbf2a, #17690d); }
+    .black { background: linear-gradient(#444, #090909); }
+
+    .digit {
+      display: grid;
+      place-items: center;
+      user-select: none;
+      font-size: clamp(38px, 11vw, 78px);
+      font-weight: 800;
+      text-shadow: 0 3px 5px rgba(0,0,0,.8);
+    }
+
+    .step {
+      min-height: 42px;
+      border: 0;
+      color: #fff;
+      background: rgba(0,0,0,.24);
+      font-size: clamp(17px, 4vw, 21px);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .step:active { background: rgba(255,255,255,.18); }
+
+    .instruction {
+      margin: 18px 0 8px;
+      color: #c9cdd0;
+      font-size: clamp(12px, 3vw, 15px);
+      letter-spacing: .08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .wheel-wrap {
+      width: clamp(170px, 48vw, 250px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .wheel {
+      position: relative;
+      width: 84%;
+      aspect-ratio: 1;
+      border: clamp(13px, 3.5vw, 18px) solid #24282c;
+      border-radius: 50%;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      background: radial-gradient(circle, #7e858a 0 8%, #2e3337 9% 30%, #121416 31%);
+      box-shadow: inset 0 0 0 4px #6d747a, inset 0 0 18px #000, 0 11px 20px rgba(0,0,0,.7);
+    }
+
+    .spoke {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 39%;
+      height: clamp(10px, 2.8vw, 14px);
+      transform-origin: 0 50%;
+      border-radius: 10px;
+      background: linear-gradient(#858c91, #202428 55%, #656b70);
+      box-shadow: 0 3px 5px rgba(0,0,0,.7);
+    }
+
+    .s1 { transform: rotate(0deg); }
+    .s2 { transform: rotate(60deg); }
+    .s3 { transform: rotate(120deg); }
+    .s4 { transform: rotate(180deg); }
+    .s5 { transform: rotate(240deg); }
+    .s6 { transform: rotate(300deg); }
+
+    .hub {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 30%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border: clamp(5px, 1.4vw, 7px) solid #171a1d;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%, #aeb4b8, #34393d 44%, #0d0f10 75%);
+    }
+
+    .status {
+      min-height: 30px;
+      margin-top: 4px;
+      font-weight: 700;
+      font-size: clamp(14px, 3.8vw, 17px);
+      color: #ef5350;
+      text-align: center;
+    }
+
+    .reset {
+      min-height: 44px;
+      margin-top: 8px;
+      padding: 10px 20px;
+      border: 1px solid #777;
+      border-radius: 10px;
+      color: #eee;
+      background: #25282b;
+      cursor: pointer;
+    }
+
+    .vault.unlocked .status { color: #6fe36f; }
+    .vault.unlocked { animation: flash .65s ease; }
+
+    @keyframes flash {
+      50% { box-shadow: 0 0 45px rgba(80,255,110,.7), inset 0 0 0 4px #9bd8a3, inset 0 0 0 10px #202326; }
+    }
+
+    @media (max-width: 430px) {
+      .content { width: 92%; margin-top: 28px; }
+      .sign { margin-bottom: 16px; }
+      .code-panel { gap: 5px; padding: 9px; }
+    }
+
+    @media (orientation: landscape) and (max-height: 650px) {
+      body { display: block; overflow: auto; }
+      .vault { min-height: 590px; margin: 0 auto; }
+      .content { margin-top: 26px; }
+      .wheel-wrap { width: 165px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="vault" id="vault">
+    <section class="content">
+      <div class="sign">CODE EINGEBEN</div>
+
+      <div class="code-panel">
+        <div class="digit-wheel red" data-index="0">
+          <button class="step up" type="button">▲</button>
+          <div class="digit">0</div>
+          <button class="step down" type="button">▼</button>
+        </div>
+        <div class="digit-wheel blue" data-index="1">
+          <button class="step up" type="button">▲</button>
+          <div class="digit">0</div>
+          <button class="step down" type="button">▼</button>
+        </div>
+        <div class="digit-wheel green" data-index="2">
+          <button class="step up" type="button">▲</button>
+          <div class="digit">0</div>
+          <button class="step down" type="button">▼</button>
+        </div>
+        <div class="digit-wheel black" data-index="3">
+          <button class="step up" type="button">▲</button>
+          <div class="digit">0</div>
+          <button class="step down" type="button">▼</button>
+        </div>
+      </div>
+
+      <p class="instruction">Code einstellen und das Rad drehen</p>
+
+      <div class="wheel-wrap">
+        <div class="wheel" id="wheel" role="button" tabindex="0">
+          <span class="spoke s1"></span><span class="spoke s2"></span>
+          <span class="spoke s3"></span><span class="spoke s4"></span>
+          <span class="spoke s5"></span><span class="spoke s6"></span>
+          <span class="hub"></span>
+        </div>
+      </div>
+
+      <div class="status" id="status">Tresor verriegelt</div>
+      <button class="reset" id="resetButton" type="button">Zurücksetzen</button>
+    </section>
+  </main>
+
+  <script>
+    // HIER ANPASSEN
+    const RICHTIGER_CODE = "1234";
+    const ZIELSEITE = "./ice.jpg";
+
+    const values = [0, 0, 0, 0];
+    const vault = document.getElementById("vault");
+    const wheel = document.getElementById("wheel");
+    const status = document.getElementById("status");
+    const resetButton = document.getElementById("resetButton");
+
+    let rotation = 0;
+    let accumulated = 0;
+    let dragging = false;
+    let lastAngle = 0;
+
+    function setStatus(text, unlocked = false) {
+      status.textContent = text;
+      vault.classList.toggle("unlocked", unlocked);
+    }
+
+    function changeDigit(index, delta) {
+      values[index] = (values[index] + delta + 10) % 10;
+      document.querySelector(`.digit-wheel[data-index="${index}"] .digit`).textContent = values[index];
+      setStatus("Tresor verriegelt");
+    }
+
+    document.querySelectorAll(".digit-wheel").forEach((field) => {
+      const index = Number(field.dataset.index);
+      field.querySelector(".up").addEventListener("click", () => changeDigit(index, 1));
+      field.querySelector(".down").addEventListener("click", () => changeDigit(index, -1));
+    });
+
+    function eventAngle(event) {
+      const rect = wheel.getBoundingClientRect();
+      const x = event.clientX - (rect.left + rect.width / 2);
+      const y = event.clientY - (rect.top + rect.height / 2);
+      return Math.atan2(y, x) * 180 / Math.PI;
+    }
+
+    function rotate(delta) {
+      rotation += delta;
+      accumulated += Math.abs(delta);
+      wheel.style.transform = `rotate(${rotation}deg)`;
+
+      if (accumulated >= 300) {
+        accumulated = 0;
+        checkCode();
+      }
+    }
+
+    function checkCode() {
+      if (values.join("") === RICHTIGER_CODE) {
+        setStatus("Tresor geöffnet", true);
+        if (navigator.vibrate) navigator.vibrate(80);
+        if (ZIELSEITE) setTimeout(() => location.href = ZIELSEITE, 900);
+      } else {
+        setStatus("Falscher Code");
+        if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+      }
+    }
+
+    wheel.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      lastAngle = eventAngle(event);
+      wheel.setPointerCapture(event.pointerId);
+    });
+
+    wheel.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      const now = eventAngle(event);
+      let delta = now - lastAngle;
+      if (delta > 180) delta -= 360;
+      if (delta < -180) delta += 360;
+      rotate(delta);
+      lastAngle = now;
+    });
+
+    wheel.addEventListener("pointerup", (event) => {
+      dragging = false;
+      if (wheel.hasPointerCapture(event.pointerId)) wheel.releasePointerCapture(event.pointerId);
+    });
+
+    wheel.addEventListener("pointercancel", () => dragging = false);
+
+    // Ein einfaches Antippen dreht das Rad ebenfalls.
+    wheel.addEventListener("click", () => {
+      if (!dragging) rotate(120);
+    });
+
+    resetButton.addEventListener("click", () => {
+      values.fill(0);
+      document.querySelectorAll(".digit").forEach(el => el.textContent = "0");
+      rotation = 0;
+      accumulated = 0;
+      wheel.style.transform = "rotate(0deg)";
+      setStatus("Tresor verriegelt");
+    });
+  </script>
+</body>
+</html>
