@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bildseite</title>
+<style>
+:root{
+  --frame-color:#ff3b30;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  background:#f4f4f4;
+  font-family:Arial,sans-serif;
+}
+.image-container{
+  padding:12px;
+  border:6px solid var(--frame-color);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
+  max-width:90vw;
+  max-height:90vh;
+  text-align: center; /* Zentriert den Text unter dem Bild */
+}
+.image-container img{
+  display:block;
+  max-width:100%;
+  max-height:calc(90vh - 80px); /* Höhe angepasst, damit Platz für den Text bleibt */
+  border-radius:10px;
+  object-fit:contain;
+  margin: 0 auto;
+}
+.image-text {
+  margin-top: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+</style>
+</head>
+<body>
+<div class="image-container">
+  <img src="./bday.png" alt="Bild">
+  <p class="image-text">Wo schläft Mama?</p>
+</div>
+</body>
+</html>
